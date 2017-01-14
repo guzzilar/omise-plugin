@@ -1,6 +1,7 @@
 <?php
 namespace OmisePlugin\Contexts;
 
+use OmisePlugin\Contexts\OmisePluginDemoContext;
 use Exception;
 
 class Context
@@ -10,7 +11,9 @@ class Context
      *
      * @var array
      */
-    protected $registered_contexts = array();
+    protected $registered_contexts = array(
+        'stdClass' => OmisePluginDemoContext::class
+    );
 
     /**
      * A concrete context class.
@@ -20,20 +23,35 @@ class Context
     protected $context;
 
     /**
-     * Read an object context.
+     * Read a context from an object.
      *
-     * @param  \OmiseApiResource $object
+     * @param  object $object
+     *
+     * @return self
+     */
+    public function readFromObject($object)
+    {
+        $context       = $this->read(get_class($object));
+        $this->context = new $context;
+
+        return $this;
+    }
+
+    /**
+     * Check if context is exists given by a target context name.
+     *
+     * @param  string $context_name
      *
      * @return string
      *
      * @throws \Exception if context not found.
      */
-    public function read($object)
+    public function read($context_name)
     {
-        if (isset($this->registered_contexts[get_class($object)])) {
-            return $this->registered_contexts[get_class($object)];
+        if (! isset($this->registered_contexts[$context_name])) {
+            throw new Exception($context_name . " context not found");
         }
 
-        throw new Exception(get_class($object) . " context not found");
+        return $this->registered_contexts[$context_name];
     }
 }
