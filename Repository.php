@@ -11,9 +11,7 @@ class Repository
     protected $context;
 
     /**
-     * @var \OmiseApiResource
-     *
-     * @see http://github.com/omise/omise-php/blob/master/lib/omise/res/OmiseApiResource.php
+     * @var object
      */
     protected $object;
 
@@ -25,5 +23,17 @@ class Repository
     {
         $this->context = $context->read($object);
         $this->object  = $object;
+    }
+
+    /**
+     * Initiate Repository instance.
+     *
+     * @param  object $object
+     *
+     * @return \OmisePlugin\Repository
+     */
+    public static function create($object)
+    {
+        return new self(new Context, $object);
     }
 }
