@@ -7,6 +7,11 @@ use OmisePlugin\Contexts\Context;
 
 class RepositoryTest extends MockeryTestCase
 {
+    public function tearDown()
+    {
+        Mockery::close();
+    }
+
     /**
      * @test
      */
@@ -17,10 +22,14 @@ class RepositoryTest extends MockeryTestCase
         $object  = Mockery::mock(stdClass::class);
 
         // Assertion.
-        $context->shouldReceive('read')
+        $context->shouldReceive('readFromObject')
             ->once()
             ->andReturn('OmisePlugin\\Contexts\\OmiseChargeContext');
-        $this->assertEquals(Repository::class, get_class(new Repository($context, $object)));
+
+        $repository = new Repository($context, $object);
+        $repository->attachContext($object);
+
+        $this->assertEquals(Repository::class, get_class($repository));
     }
 
     /**
@@ -28,7 +37,7 @@ class RepositoryTest extends MockeryTestCase
      * @expectedException        Exception
      * @expectedExceptionMessage Mockery_1_stdClass context not found
      */
-    public function context_reader_cannot_read_the_context_from_an_object()
+    public function cannot_create_new_repository_from_unknow_object()
     {
         // Initialisation.
         $object = Mockery::mock(stdClass::class);

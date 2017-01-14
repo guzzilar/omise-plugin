@@ -17,11 +17,11 @@ class Repository
 
     /**
      * @param \OmisePlugin\Contexts\Context $context
-     * @param \OmiseApiResource             $object
+     * @param object                        $object
      */
-    public function __construct($context, $object)
+    public function __construct(Context $context, $object)
     {
-        $this->context = $context->read($object);
+        $this->context = $context;
         $this->object  = $object;
     }
 
@@ -34,6 +34,17 @@ class Repository
      */
     public static function create($object)
     {
-        return new self(new Context, $object);
+        $repository = new self(new Context, $object);
+        $repository->attachContext($object);
+
+        return $repository;
+    }
+
+    /**
+     * @param object $object
+     */
+    public function attachContext($object)
+    {
+        $this->context->readFromObject($object);
     }
 }
