@@ -1,8 +1,8 @@
 <?php
 namespace OmisePlugin\Contexts;
 
-use OmisePlugin\Contexts\OmisePluginDemoContext;
 use Exception;
+use OmisePlugin\Contexts\OmisePluginDemoContext;
 
 class Context
 {
@@ -53,5 +53,18 @@ class Context
         }
 
         return $this->registered_contexts[$context_name];
+    }
+    /**
+     * @param  string $method
+     * @param  array  $args
+     * @param  object $object
+     *
+     * @return mixed
+     */
+    public function execute($method, $args, $object)
+    {
+        array_unshift($args, $object);
+
+        return call_user_func_array(array($this->context, $method), $args);
     }
 }
