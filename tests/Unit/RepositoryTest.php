@@ -43,6 +43,6 @@ class RepositoryTest extends MockeryTestCase
         $object = Mockery::mock(stdClass::class);
 
         // Assertion.
-        Repository::create($object);
+        Repository::add($object);
     }
 }

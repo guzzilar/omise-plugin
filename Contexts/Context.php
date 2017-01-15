@@ -12,7 +12,8 @@ class Context
      * @var array
      */
     protected $registered_contexts = array(
-        'stdClass' => OmisePluginDemoContext::class
+        'stdClass'    => OmisePluginDemoContext::class,
+        'OmiseCharge' => OmiseChargeContext::class
     );
 
     /**
@@ -35,11 +36,24 @@ class Context
      *
      * @param  object $object
      *
-     * @return self
+     * @return void
      */
     public function readFromObject($object)
     {
         $context       = $this->read(get_class($object));
+        $this->context = new $context;
+    }
+
+    /**
+     * Read a context from name.
+     *
+     * @param  string $name
+     *
+     * @return void
+     */
+    public function readFromName($name)
+    {
+        $context       = $this->read($name);
         $this->context = new $context;
     }
 
@@ -62,15 +76,17 @@ class Context
     }
 
     /**
-     * @param  string $method
-     * @param  array  $args
-     * @param  object $object
+     * @param  string      $method
+     * @param  array       $args
+     * @param  null|object $object
      *
      * @return mixed
      */
-    public function execute($method, $args, $object)
+    public function execute($method, $args, $object = null)
     {
-        array_unshift($args, $object);
+        if (! is_null($object)) {
+            array_unshift($args, $object);
+        }
 
         return call_user_func_array(array($this->context, $method), $args);
     }
