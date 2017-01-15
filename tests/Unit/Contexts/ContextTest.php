@@ -18,11 +18,13 @@ class ContextTest extends MockeryTestCase
     public function read_a_context()
     {
         // Initialisation.
-        $context = new Context;
         $object  = new stdClass;
+        $context = new Context;
+        $context->readFromObject($object);
 
         // Assertion.
-        $this->assertEquals(Context::class, get_class($context->readFromObject($object)));
+        $this->assertEquals(Context::class, get_class($context));
+        $this->assertEquals('OmisePlugin\Contexts\OmisePluginDemoContext', $context->name());
     }
 
     /**

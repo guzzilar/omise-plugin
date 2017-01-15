@@ -23,6 +23,14 @@ class Context
     protected $context;
 
     /**
+     * @return string
+     */
+    public function name()
+    {
+        return get_class($this->context);
+    }
+
+    /**
      * Read a context from an object.
      *
      * @param  object $object
@@ -33,8 +41,6 @@ class Context
     {
         $context       = $this->read(get_class($object));
         $this->context = new $context;
-
-        return $this;
     }
 
     /**
@@ -54,6 +60,7 @@ class Context
 
         return $this->registered_contexts[$context_name];
     }
+
     /**
      * @param  string $method
      * @param  array  $args
