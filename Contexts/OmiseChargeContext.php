@@ -7,6 +7,18 @@ namespace OmisePlugin\Contexts;
 class OmiseChargeContext
 {
     /**
+     * @param  array $params
+     *
+     * @return \OmiseCharge
+     */
+    public function create($params)
+    {
+        $charge = \OmiseCharge::create($params);
+
+        return $charge;
+    }
+
+    /**
      * @param  \OmiseCharge $charge
      *
      * @return bool
@@ -78,17 +90,5 @@ class OmiseChargeContext
         }
 
         return false;
-    }
-
-    /**
-     * @param  array $params
-     *
-     * @return \OmiseCharge
-     */
-    public function create($params)
-    {
-        $charge = \OmiseCharge::create($params);
-
-        return $charge;
     }
 }
