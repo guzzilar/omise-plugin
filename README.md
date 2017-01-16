@@ -17,6 +17,8 @@ Plugin for [Omise-PHP](http://github.com/omise/omise-php)
 
   - **create($params)**  
 
+    **return** `\OmiseCharge`
+
     **example**
 
     ```php
@@ -36,10 +38,12 @@ Plugin for [Omise-PHP](http://github.com/omise/omise-php)
 
   - **isAuthorized()**
 
+    **return** `bool`
+
     **example**
 
     ```php
-    $charge = \OmiseCharge::retrieve('chrg_id');
+    $charge = OmiseCharge::retrieve('chrg_id');
     $charge = \OmisePlugin\Repository::add($charge);
 
     if ($charge->isAuthorized()) {
@@ -49,7 +53,26 @@ Plugin for [Omise-PHP](http://github.com/omise/omise-php)
     }
     ```
 
+  - **isPaid()**
+
+    **return** `bool`
+
+    **example**
+
+    ```php
+    $charge = OmiseCharge::retrieve('chrg_id');
+    $charge = \OmisePlugin\Repository::add($charge);
+
+    if ($charge->isPaid()) {
+        // success
+    } else {
+        // fail
+    }
+    ```
+
   - **need3DSecureProcess()**
+
+    **return** `bool`
 
     **example**
 
@@ -70,6 +93,8 @@ Plugin for [Omise-PHP](http://github.com/omise/omise-php)
     ```
 
   - **validateAfter3DSecureProcess($success_callback, $fail_callback)**
+
+    **return** `mixed`
 
     **example**
 
