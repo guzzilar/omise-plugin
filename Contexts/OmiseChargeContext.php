@@ -50,28 +50,6 @@ class OmiseChargeContext
 
     /**
      * @param  \OmiseCharge $charge
-     * @param  callable     $success_callback
-     * @param  callable     $fail_callback
-     *
-     * @return mixed
-     */
-    public function validateAfter3DSecureProcess($charge, $success_callback = null, $fail_callback = null)
-    {
-        if (($charge['capture'] && $this->isPaid($charge))
-            || (! $charge['capture'] && $this->isAuthorized($charge))
-        ) {
-            if (is_callable($success_callback)) return $success_callback($charge);
-
-            return true;
-        }
-
-        if (is_callable($fail_callback)) return $fail_callback($charge);
-
-        return false;
-    }
-
-    /**
-     * @param  \OmiseCharge $charge
      *
      * @return bool
      */
@@ -88,6 +66,28 @@ class OmiseChargeContext
         ) {
             return true;
         }
+
+        return false;
+    }
+
+    /**
+     * @param  \OmiseCharge $charge
+     * @param  callable     $success_callback
+     * @param  callable     $fail_callback
+     *
+     * @return mixed
+     */
+    public function validateAfter3DSecureProcess($charge, $success_callback = null, $fail_callback = null)
+    {
+        if (($charge['capture'] && $this->isPaid($charge))
+            || (! $charge['capture'] && $this->isAuthorized($charge))
+        ) {
+            if (is_callable($success_callback)) return $success_callback($charge);
+
+            return true;
+        }
+
+        if (is_callable($fail_callback)) return $fail_callback($charge);
 
         return false;
     }
