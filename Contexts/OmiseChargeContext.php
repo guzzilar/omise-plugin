@@ -1,14 +1,27 @@
 <?php
 namespace OmisePlugin\Contexts;
 
+/**
+ * @see https://github.com/omise/omise-php/blob/master/lib/omise/OmiseCharge.php;
+ */
 class OmiseChargeContext
 {
+    /**
+     * @param  array $params
+     *
+     * @return \OmiseCharge
+     */
+    public function create($params)
+    {
+        $charge = \OmiseCharge::create($params);
+
+        return $charge;
+    }
+
     /**
      * @param  \OmiseCharge $charge
      *
      * @return bool
-     *
-     * @see    https://github.com/omise/omise-php/blob/master/lib/omise/OmiseCharge.php;
      */
     public function isAuthorized($charge)
     {
@@ -23,8 +36,6 @@ class OmiseChargeContext
      * @param  \OmiseCharge $charge
      *
      * @return bool
-     *
-     * @see    https://github.com/omise/omise-php/blob/master/lib/omise/OmiseCharge.php;
      */
     public function isPaid($charge)
     {
@@ -37,10 +48,47 @@ class OmiseChargeContext
         return false;
     }
 
-    public function create($params)
+    /**
+     * @param  \OmiseCharge $charge
+     *
+     * @return bool
+     */
+    public function need3DSecureProcess($charge)
     {
-        $charge = \OmiseCharge::create($params);
+        $paid = isset($charge['paid']) ? $charge['paid'] : $charge['captured'];
 
-        return $charge;
+        if ($charge['status'] === 'pending'
+            && ! $charge['authorized']
+            && ! $paid
+            && $charge['source_of_fund'] === 'card'
+            && isset($charge['authorize_uri'])
+            && $charge['authorize_uri'] != null
+        ) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param  \OmiseCharge $charge
+     * @param  callable     $success_callback
+     * @param  callable     $fail_callback
+     *
+     * @return mixed
+     */
+    public function validateAfter3DSecureProcess($charge, $success_callback = null, $fail_callback = null)
+    {
+        if (($charge['capture'] && $this->isPaid($charge))
+            || (! $charge['capture'] && $this->isAuthorized($charge))
+        ) {
+            if (is_callable($success_callback)) return $success_callback($charge);
+
+            return true;
+        }
+
+        if (is_callable($fail_callback)) return $fail_callback($charge);
+
+        return false;
     }
 }

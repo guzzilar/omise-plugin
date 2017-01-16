@@ -17,9 +17,16 @@ Plugin for [Omise-PHP](http://github.com/omise/omise-php)
 
   - **create($params)**  
 
+    **return** `\OmiseCharge`
+
     **example**
 
     ```php
+    $params = array(
+        'amount' => 10000,
+        'card' => 'tokn_test_generated_by_omise',
+        'currency' => 'thb'
+    );
     $charge = \OmisePlugin\Repository::create('OmiseCharge', $params);
 
     if ($charge->isPaid()) {
@@ -30,6 +37,8 @@ Plugin for [Omise-PHP](http://github.com/omise/omise-php)
     ```
 
   - **isAuthorized()**
+
+    **return** `bool`
 
     **example**
 
@@ -46,6 +55,8 @@ Plugin for [Omise-PHP](http://github.com/omise/omise-php)
 
   - **isPaid()**
 
+    **return** `bool`
+
     **example**
 
     ```php
@@ -57,4 +68,52 @@ Plugin for [Omise-PHP](http://github.com/omise/omise-php)
     } else {
         // fail
     }
+    ```
+
+  - **need3DSecureProcess()**
+
+    **return** `bool`
+
+    **example**
+
+    ```php
+    $params = array(
+        'amount' => 10000,
+        'card' => 'tokn_test_generated_by_omise',
+        'currency' => 'thb'
+    );
+    $charge = \OmisePlugin\Repository::create('OmiseCharge', $params);
+
+    if ($charge->need3DSecureProcess()) {
+        // redirect
+    } else {
+        // do nothing. Or maybe you can check,
+        // $charge->isPaid();
+    }
+    ```
+
+  - **validateAfter3DSecureProcess($success_callback, $fail_callback)**
+
+    **return** `mixed`
+
+    **example**
+
+    ```php
+    // After buyer was redirected back by the 3-D Secure process.
+    // You can check the result by the following code.
+    $your_db_connection_object = DB::Connection();
+
+    $charge = OmiseCharge::retrieve('chrg_id');
+    $charge = \OmisePlugin\Repository::add($charge);
+
+    $charge->validateAfter3DSecureProcess(
+        function($charge) use ($your_db_connection_object) {
+            // Update record as success.
+            // $your_db_connection_object->update('status', 'success');
+        },
+        function($charge) use ($your_db_connection_object) {
+            // Update record as failed.
+            // $your_db_connection_object->update('status', 'failed');
+        },
+    );
     ```
