@@ -1,9 +1,10 @@
 <?php
 namespace OmisePlugin;
 
+use ArrayAccess;
 use OmisePlugin\Contexts\Context;
 
-class Repository
+class Repository implements ArrayAccess
 {
     /**
      * @var \OmisePlugin\Contexts\Context
@@ -71,6 +72,46 @@ class Repository
     public function attachContextByName($name)
     {
         $this->context->readFromName($name);
+    }
+
+    /**
+     * Implementation from the ArrayAccess interface.
+     *
+     * @see http://php.net/manual/en/arrayaccess.offsetexists.php
+     */
+    public function offsetExists($key)
+    {
+        return isset($this->object[$key]);
+    }
+
+    /**
+     * Implementation from the ArrayAccess interface.
+     *
+     * @see http://php.net/manual/en/arrayaccess.offsetget.php
+     */
+    public function offsetGet($key)
+    {
+        return isset($this->object[$key]) ? $this->object[$key] : null;
+    }
+
+    /**
+     * Implementation from the ArrayAccess interface.
+     *
+     * @see http://php.net/manual/en/arrayaccess.offsetset.php
+     */
+    public function offsetSet($key, $value)
+    {
+        $this->object[$key] = $value;
+    }
+
+    /**
+     * Implementation from the ArrayAccess interface.
+     *
+     * @see http://php.net/manual/en/arrayaccess.offsetunset.php
+     */
+    public function offsetUnset($key)
+    {
+        unset($this->object[$key]);
     }
 
     /**
